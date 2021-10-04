@@ -1,0 +1,16 @@
+Version check @ Mon Oct 4 23:34:49 KST 2021 -
+=========================================
+- Hard Macro ----------------------------
+lib/ip1 - latest : 2022, version : version-2022
+lib/ip2 - latest : 1998, version : version-2021
+lib/ip3 - [ERROR] check IP version agian!
+lib/ip4 - latest : 2023, version : version-2023
+lib/ip5 - latest : 2023, version : version-2023
+lib/ip6 - latest : 2022, version : version-2022
+- Soft Macro ----------------------------
+link/ip1 - latest : 2021, version : version-2021
+link/ip2 - latest : 2022, version : version-2022
+link/ip3 - latest : 2023, version : version-2023
+link/ip4 - latest : 2023, version : version-2023
+link/ip5 - latest : 2033, version : version-2030
+=========================================
