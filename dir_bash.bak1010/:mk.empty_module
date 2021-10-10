@@ -1,0 +1,82 @@
+#!/bin/bash
+########################################################################
+#  Copyright Telechips Inc.  All Rights reserved
+########################################################################
+#
+#  File           :  :mk.empty_module
+#  Creator        :  Sukhyun ( ysh1219@telechips.com )
+#  Creation Date  :  2012-11-15
+#  Description    :  
+#
+########################################################################
+
+#MODULE_NAME=`grep module $1 | awk '{ print $2 }' | cut -d "(" -f 1`
+#echo "${MODULE_NAME}"
+
+module_name="${1%.*}"
+#echo "${module_name}"
+
+empty_file_name="${module_name}.v.empty"
+
+if [ -e "${empty_file_name}" ];then
+    echo "${empty_file_name} - already exist!"
+    echo "move ${empty_file_name} ${empty_file_name}.bkp"
+    mv ${empty_file_name} ${empty_file_name}.bkp
+##    exit 1
+fi
+
+
+## cat << EOI > "${1}.empty.v"
+cat << EOI > "${empty_file_name}"
+// empty module generation script 
+// file generated @ `date +%F" "%T`
+
+module MODULE_NAME_HERE (/*AUTOARG*/);
+
+EOI
+
+#sed -n \
+#    -e "s/^  *parameter/parameter/" \
+#    -e "s/^\t*parameter/parameter/" \
+#    -e "/^parameter/p" \
+#    "${1}" >> "${empty_file_name}"
+
+## cat << EOI >> "${1}.empty.v"
+cat << EOI >> "${empty_file_name}"
+
+    /*AUTOINOUTMODULE("${module_name}")*/
+
+    /*AUTOTIEOFF*/
+
+endmodule
+
+// Local Variables:
+// verilog-library-directories:("./")
+// verilog-auto-inst-param-value:t
+// verilog-auto-inst-sort:nil
+// verilog-auto-inst-template-numbers:t
+// tab-width:4
+// vim:ts=4:et:sw=4:sts=4
+// End:
+EOI
+
+## emacs --batch "${1}.empty.v" -l ~us81/elisp/verilog-mode.el -f verilog-batch-auto
+#emacs --batch "${empty_file_name}" -l ~us81/elisp/verilog-mode.el -f verilog-batch-auto
+
+## sed -i -e "s/MODULE_NAME_HERE/${module_name}/" "${empty_file_name}"
+## sed -i -e '/wire.*[Rr][Ee][Aa][Dd][Yy]/s/h0;$/h1;/' "${empty_file_name}" #// Insert by sukhyun @ 2013-11-26_12:34:02
+
+sed -i -e "s/MODULE_NAME_HERE/${module_name}/" "${empty_file_name}"
+sed -i \
+	-e '/wire.*[Rr][Ee][Aa][Dd][Yy]/s/=.*$/= -1;/' \
+	-e '/wire.*[Rr][Dd][Pp][Tt][Rr]/s/=.*$/= -1;/' \
+	-e '/wire.*[Ww][Rr][Pp][Tt][Rr]/s/=.*$/= -1;/' \
+	-e '/wire.*[Pp][Ww][Rr][Dd][Nn][Rr][Ee][Qq][Nn]/s/=.*$/= -1;/' \
+	-e '/wire.*[Pp][Ww][Rr][Dd][Nn][Aa][Cc][Kk][Nn]/s/=.*$/= -1;/' \
+	-e '/wire.*SDMA_START_/s/=.*$/= -1;/' \
+	"${empty_file_name}" #// Insert by sukhyun @ 2013-11-26_12:34:02
+#
+sed -i 's/\(wire.\s\)\(\w*[Aa][Nn][Ss][Aa][Cc][Kk]\)\(=.*$\)/ \1 \2 =\2;/g' "${empty_file_name}" #// Insert by pjs80
+sed -i 's/\(wire.\s\)\(\w*[Aa][Nn][Ss][Aa][Cc][Kk]\)\(\s=.*$\)/ \1 \2 =\2;/g' "${empty_file_name}" #// Insert by pjs80
+sed -i 's/\(=.*[Aa][Nn][Ss]\)\(.*\)/\1REQ;/g' "${empty_file_name}" #// Insert by pjs80
+
